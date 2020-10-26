@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Grid xmlns:prism="http://prismlibrary.com"
+      prism:ViewModelLocator.AutowireViewModel="True"
+      xmlns="http://xamarin.com/schemas/2014/forms" 
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      HeightRequest="300"
+      WidthRequest="300"
+      BackgroundColor="Lavender"
+      x:Class="BeautyPlanner.Views.AlertDialog">
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition />
+        <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <BoxView BackgroundColor="Aquamarine" Grid.Row="0"
+             WidthRequest="300"/>
+    <Label Grid.Row="0"
+           Text="{Binding Title}"
+           Style="{DynamicResource TitleStyle}"
+           Margin="20,5"
+           TextColor="White" />
+    <Label Grid.Row="1" Text="{Binding Message}"></Label>
+    <Button Text="OK"
+            Grid.Row="2" 
+            Command="{Binding CloseCommand}"
+            HorizontalOptions="Center"
+            Margin="0,0,0,10"/>
+  
+</Grid>

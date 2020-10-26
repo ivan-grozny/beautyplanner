@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Grid xmlns:prism="http://prismlibrary.com"
+      prism:ViewModelLocator.AutowireViewModel="True"
+      xmlns="http://xamarin.com/schemas/2014/forms"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:converters="clr-namespace:BeautyPlanner.Converters;assembly=BeautyPlanner"
+      BackgroundColor="Lavender"
+      HeightRequest="500"
+      WidthRequest="300"
+      x:Name="Root"
+      x:Class="BeautyPlanner.Views.TimetableDialog">
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition />
+        <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+
+    <BoxView BackgroundColor="Aquamarine" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+           Text="{Binding Title}"
+           Style="{DynamicResource TitleStyle}"
+           Margin="20,5"
+           TextColor="White" />
+    <Label Text="Рабочий" Grid.Row="1" Grid.Column="0" >
+        <Label.GestureRecognizers>
+            <TapGestureRecognizer Command="{Binding SwitchToAppointmentsCommand}"/>
+        </Label.GestureRecognizers>
+    </Label>
+    <Label Text="Выходной" Grid.Row="1" Grid.Column="1" >
+        <Label.GestureRecognizers>
+            <TapGestureRecognizer Command="{Binding SwitchToFreeDayCommand}"/>
+        </Label.GestureRecognizers>
+    </Label>
+
+    <!--Appointments area-->
+    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+          IsVisible="{Binding IsAppointmentsTabVisible}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ListView Grid.Row="0" ItemsSource="{Binding Day.Appointments}" SelectionMode="None" SeparatorVisibility="None" >
+            <ListView.ItemTemplate>
+                <DataTemplate >
+                    <ViewCell>
+                        <Grid WidthRequest="300">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TimePicker Grid.Column="0" Time="{Binding Time}" IsVisible="{Binding IsFreeDay, Converter={converters:InverseBoolConverter}}" />
+                            <Label Grid.Column="0" Text="{Binding AppointmentType}" IsVisible="{Binding IsFreeDay}"/>
+                            <Button Grid.Column="3" Text="x" Command="{Binding Path=BindingContext.DeleteAppointmentCommand, Source={x:Reference Root}}"
+                                    CommandParameter="{Binding}"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Button Grid.Row="1" Text="Новая запись..." Command="{Binding AddAppointmentCommand}"/>
+    </Grid>
+
+    <!--Free day area-->
+    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
+          IsVisible="{Binding IsAppointmentsTabVisible, Converter={converters:InverseBoolConverter}}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Grid.Column="1" Text="Важность:"/>
+        <Picker Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding FreeDayTypes}" SelectedItem="{Binding TempFreeDay.AppointmentType}"/>
+        <Entry Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding TempFreeDay.LinkOrText}"/>
+    </Grid>
+    
+    <Button Text="Ok"
+            Grid.Row="3" Grid.Column="0" 
+            Command="{Binding SaveAppointmentsCommand}"
+            HorizontalOptions="Center"
+            Margin="0,0,0,10"/>
+
+    <Button Text="Отмена"
+            Grid.Row="3" Grid.Column="1" 
+            Command="{Binding CancelCommand}"
+            HorizontalOptions="Center"
+            Margin="0,0,0,10"/>
+</Grid>

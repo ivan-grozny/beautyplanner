@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Grid xmlns:prism="http://prismlibrary.com"
+      prism:ViewModelLocator.AutowireViewModel="True"
+      xmlns="http://xamarin.com/schemas/2014/forms" 
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:behaviors="clr-namespace:BeautyPlanner.Behaviors;assembly=BeautyPlanner"
+      HeightRequest="500"
+      WidthRequest="300"
+      BackgroundColor="Lavender"
+      x:Name="Root"
+      x:Class="BeautyPlanner.Views.AppointmentDialog">
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition />
+        <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+
+    <BoxView BackgroundColor="Aquamarine" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+             WidthRequest="300"/>
+    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+           Text="{Binding Title}"
+           Style="{DynamicResource TitleStyle}"
+           Margin="20,5"
+           TextColor="White" />
+
+    <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Column="0" Grid.Row="0" Text="Время" />
+        <TimePicker Grid.Column="1" Grid.Row="0" Time="{Binding Appointment.Time}" />
+        <Label Grid.Column="0" Grid.Row="1" Text="Клиент" />
+        <Entry Grid.Column="1" Grid.Row="1" Text="{Binding Appointment.LinkOrText}" />
+        <Label Grid.Column="0" Grid.Row="2" Text="Телефон" />
+        <Entry Grid.Column="1" Grid.Row="2" >
+            <Entry.Behaviors>
+                <behaviors:MaskedEntryBehavior Mask="+(XX) XXX-XX-XX"/>
+            </Entry.Behaviors>
+        </Entry>
+        <Label Grid.Column="0" Grid.Row="3" Text="Тип процедуры" />
+        <Picker Grid.Column="1" Grid.Row="3" ItemsSource="{Binding ProcedureTypes}" 
+                SelectedItem="{Binding Appointment.AppointmentType}"/>
+    </Grid>
+
+    <Button Text="Ok"
+            Grid.Row="2" Grid.Column="0" 
+            Command="{Binding SaveChangesCommand}"
+            HorizontalOptions="Center"
+            Margin="0,0,0,10"/>
+
+    <Button Text="Отмена"
+            Grid.Row="2" Grid.Column="1" 
+            Command="{Binding CancelCommand}"
+            HorizontalOptions="Center"
+            Margin="0,0,0,10"/>
+</Grid>

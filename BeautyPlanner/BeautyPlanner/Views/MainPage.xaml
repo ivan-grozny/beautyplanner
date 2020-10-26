@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:BeautyPlanner.Views;assembly=BeautyPlanner"
+             x:Class="BeautyPlanner.Views.MainPage"
+             Title="{Binding Title}"
+             NavigationPage.HasNavigationBar="false">
+
+    <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+        <views:Month></views:Month>
+        <Grid VerticalOptions="End">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Text="Scrsht" Command="{Binding ShowTimetableCommand}"/>
+            <Button Grid.Column="1" Text="Menu" />
+        </Grid>
+    </StackLayout>
+
+</ContentPage>
