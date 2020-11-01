@@ -162,7 +162,6 @@ namespace BeautyPlanner.ViewModels
 
         #endregion
 
-        
         private async Task LoadMonthAsync(DateTime date)
         {
             Days.Clear();

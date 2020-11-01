@@ -5,6 +5,10 @@
              x:Class="BeautyPlanner.App">
   <Application.Resources>
       <ResourceDictionary>
+
+          <Color x:Key="DarkBlueColor">#17407E</Color>
+          <Color x:Key="LightBlueColor">#E8F2FA</Color>
+          <Color x:Key="LightGrayColor">#D0D8DE</Color>
           <Style TargetType="NavigationPage">
               <Setter Property="HasNavigationBar" Value="False" />
           </Style>

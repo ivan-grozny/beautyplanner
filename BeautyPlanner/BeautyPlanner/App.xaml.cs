@@ -4,6 +4,7 @@ using Prism;
 using Prism.Ioc;
 using BeautyPlanner.ViewModels;
 using BeautyPlanner.Views;
+using DLToolkit.Forms.Controls;
 using Xamarin.Essentials.Interfaces;
 using Xamarin.Essentials.Implementation;
 using Xamarin.Forms;
@@ -21,7 +22,11 @@ namespace BeautyPlanner
          */
         public App() : this(null) { }
 
-        public App(IPlatformInitializer initializer) : base(initializer) { }
+        public App(IPlatformInitializer initializer) : base(initializer)
+        {
+            InitializeComponent();
+            FlowListView.Init();
+        }
 
         protected override async void OnInitialized()
         {

@@ -1,14 +1,83 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:views="clr-namespace:BeautyPlanner.Views;assembly=BeautyPlanner"
+             xmlns:behaviors="clr-namespace:BeautyPlanner.Behaviors;assembly=BeautyPlanner"
              x:Class="BeautyPlanner.Views.MainPage"
              Title="{Binding Title}"
              NavigationPage.HasNavigationBar="false">
 
-    <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-        <views:Month></views:Month>
-        <Grid VerticalOptions="End">
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!--Title area-->
+        <Grid Grid.Row="0">
+            <Label Text="o_minsk_nails" />
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <ScrollView>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <!--Calendar-->
+                    <Grid Grid.Row="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Frame Grid.Row="0" WidthRequest="392" Padding="3" HorizontalOptions="Center">
+                            <FlexLayout  Wrap ="Wrap"
+                                         BindableLayout.ItemsSource="{Binding Days}"
+                                         Direction="Row"
+                                         JustifyContent="Start"
+                                          Padding="0">
+
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate >
+
+                                        <Label VerticalOptions="Center" Padding="0" 
+                                               HeightRequest="50" WidthRequest="50"
+                                               Text="{Binding Date, StringFormat='{0:dd}'}"
+                                               VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Margin="3"
+                                               BackgroundColor="{StaticResource LightBlueColor}">
+                                            <Label.Behaviors>
+                                                <behaviors:CalendarOffsetBehavior/>
+                                            </Label.Behaviors>
+                                        </Label>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </FlexLayout>
+                        </Frame>
+
+                        
+                        
+                    </Grid>
+
+                    <!--Month switcher area-->
+                    <Grid Grid.Row="1" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Button Text="◄" Grid.Column="0" Command="{Binding LoadPreviousMonthCommand}"/>
+                        <Label Text="{Binding MonthName}" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" FontSize="Medium"/>
+                        <Button Text="►" Grid.Column="2" Command="{Binding LoadNextMonthCommand}"/>
+                    </Grid>
+                </Grid>
+            </ScrollView>
+        </Grid>
+
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -16,6 +85,6 @@
             <Button Grid.Column="0" Text="Scrsht" Command="{Binding ShowTimetableCommand}"/>
             <Button Grid.Column="1" Text="Menu" />
         </Grid>
-    </StackLayout>
+    </Grid>
 
 </ContentPage>
