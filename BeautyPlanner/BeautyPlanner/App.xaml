@@ -5,14 +5,30 @@
              x:Class="BeautyPlanner.App">
   <Application.Resources>
       <ResourceDictionary>
-
           <Color x:Key="DarkBlueColor">#17407E</Color>
           <Color x:Key="LightBlueColor">#E8F2FA</Color>
           <Color x:Key="LightGrayColor">#D0D8DE</Color>
+          <Color x:Key="WhiteColor">White</Color>
+
           <Style TargetType="NavigationPage">
               <Setter Property="HasNavigationBar" Value="False" />
           </Style>
-
+          <Style TargetType="Label" x:Key="SelectedTabStyle">
+              <Setter Property="BackgroundColor" Value="{StaticResource DarkBlueColor}" />
+              <Setter Property="TextColor" Value="{StaticResource WhiteColor}" />
+          </Style>
+          <Style TargetType="Label" x:Key="TabStyle">
+              <Setter Property="BackgroundColor" Value="{StaticResource LightBlueColor}" />
+              <Setter Property="TextColor" Value="{StaticResource DarkBlueColor}" />
+          </Style>
+          <Style TargetType="Label" x:Key="SelectedCalendarDayStyle">
+              <Setter Property="BackgroundColor" Value="{StaticResource DarkBlueColor}" />
+              <Setter Property="TextColor" Value="{StaticResource WhiteColor}" />
+          </Style>
+          <Style TargetType="Label" x:Key="CalendarDayStyle">
+              <Setter Property="BackgroundColor" Value="{StaticResource LightBlueColor}" />
+              <Setter Property="TextColor" Value="{StaticResource DarkBlueColor}" />
+          </Style>
       </ResourceDictionary>
   </Application.Resources>
 </prism:PrismApplication>

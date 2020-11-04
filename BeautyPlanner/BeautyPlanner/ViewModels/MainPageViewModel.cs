@@ -22,8 +22,6 @@ namespace BeautyPlanner.ViewModels
             IDialogService dialogService)
             : base(navigationService)
         {
-            Title = "Свободные места";
-
             ShowTimetableCommand = new DelegateCommand(ShowTimetable);
 
             _databaseService = databaseService;
@@ -32,14 +30,17 @@ namespace BeautyPlanner.ViewModels
             LoadMonthAsync(DateTime.Now).SafeFireAndForget(true, e => LoadMonthAsync(DateTime.Now));
             _currrentDateTime = DateTime.Now;
 
-            AddAppointmentCommand = new DelegateCommand<Day>(AddAppointment);
-            ViewAppointmentCommand = new DelegateCommand<Appointment>(ViewAppointment);
+            //AddAppointmentCommand = new DelegateCommand<Day>(AddAppointment);
+            //ViewAppointmentCommand = new DelegateCommand<Appointment>(ViewAppointment);
+
+            SwitchToAppointmentsCommand = new DelegateCommand(SwitchToAppointments);
+            SwitchToNewAppointmentCommand = new DelegateCommand(SwitchToNewAppointment);
 
             LoadNextMonthCommand = new DelegateCommand(LoadNextMonth);
             LoadPreviousMonthCommand = new DelegateCommand(LoadPreviousMonth);
-        }
 
-       // public ObservableCollection<Month> Months { get; set; } = new ObservableCollection<Month>();
+            SelectDayCommand = new DelegateCommand<Day>(SelectDay);
+        }
 
         #region ShowTimetableCommand
 
@@ -67,75 +68,173 @@ namespace BeautyPlanner.ViewModels
 
         #endregion
 
+        #region IsAppointmentsTabVisible property
 
-        #region AddAppointmentCommand
-
-        public DelegateCommand<Day> AddAppointmentCommand { get; }
-
-        private void AddAppointment(Day day)
+        private bool _isAppointmentsTabVisible = true;
+        public bool IsAppointmentsTabVisible
         {
-            var parameters = new DialogParameters
-            {
-                { "title", $"{day.Date:dd.MM.yyyy}, {TranslateWeekday(day.Date.DayOfWeek.ToString())}" },
-                { "day", day }
-            };
-            _dialogService.ShowDialog("TimetableDialog", parameters);
+            get => _isAppointmentsTabVisible;
+            set => SetProperty(ref _isAppointmentsTabVisible, value);
         }
 
         #endregion
 
-        #region ViewAppointmentCommand
+        #region FrameHeight property
 
-        public DelegateCommand<Appointment> ViewAppointmentCommand { get; }
-
-        private void ViewAppointment(Appointment appointment)
+        private int _frameHeight;
+        public int FrameHeight
         {
-            if (appointment.LinkOrText == null && !appointment.IsFreeDay)
+            get => _frameHeight;
+            set => SetProperty(ref _frameHeight, value);
+        }
+
+        private void SetFrameHeight()
+        {
+            var date = new DateTime(_currrentDateTime.Year, _currrentDateTime.Month, 1); 
+            var weekday = date.DayOfWeek;
+            var firstWeekDays = 0;
+            switch (weekday)
             {
-                EditAppointment(appointment);
+                case DayOfWeek.Tuesday:
+                    firstWeekDays = 6;
+                    break;
+                case DayOfWeek.Wednesday:
+                    firstWeekDays = 5;
+                    break;
+                case DayOfWeek.Thursday:
+                    firstWeekDays = 4;
+                    break;
+                case DayOfWeek.Friday:
+                    firstWeekDays = 3;
+                    break;
+                case DayOfWeek.Saturday:
+                    firstWeekDays = 2;
+                    break;
+                case DayOfWeek.Sunday:
+                    firstWeekDays = 1;
+                    break;
             }
 
-            else
+            var weekdays = Days.Count - firstWeekDays;
+            var weeks = weekdays / 7.0;
+            if (!IsInteger(weeks))
             {
-                ViewClientInfo(appointment);
+                weeks += 1;
+            }
+
+            if (firstWeekDays != 0)
+            {
+                weeks += 1;
+            }
+
+            switch ((int)weeks)
+            {
+                case 6: 
+                    FrameHeight = 336;
+                    break;
+                case 5:
+                    FrameHeight = 280;
+                    break;
+                case 4:
+                    FrameHeight = 224;
+                    break;
             }
         }
 
-        private void EditAppointment(Appointment appointment)
+        private bool IsInteger(double number)
         {
-            var date = Days.Where(day => day.Id == appointment.DayId).FirstOrDefault().Date;
-            var parameters = new DialogParameters
-            {
-                { "title", $"{date.Date:dd.MM.yyyy}, {TranslateWeekday(date.Date.DayOfWeek.ToString())}" },
-                { "appointment", appointment }
-            };
-            _dialogService.ShowDialog("AppointmentDialog", parameters);
-        }
-
-        private void ViewClientInfo(Appointment appointment)
-        {
-            if (appointment.LinkOrText != null && UriHelper.IsLink(appointment.LinkOrText))
-            {
-                Launcher.OpenAsync(new Uri(appointment.LinkOrText));
-            }
-            else
-            {
-                var date = Days.Where(day => day.Id == appointment.DayId).FirstOrDefault().Date;
-                var message = appointment.LinkOrText;
-                if (appointment.IsFreeDay && appointment.LinkOrText == null)
-                {
-                    message = "Отдыхайте ٩(◕‿◕)۶";
-                }
-                var parameters = new DialogParameters
-                {
-                    { "title", $"{date.Date:dd.MM.yyyy}, {TranslateWeekday(date.Date.DayOfWeek.ToString())}" },
-                    { "message", message }
-                };
-                _dialogService.ShowDialog("AlertDialog", parameters);
-            }
+            return (number % 1 == 0);
         }
 
         #endregion
+
+        #region SwitchToAppointmentsCommand
+        public DelegateCommand SwitchToAppointmentsCommand { get; }
+        private void SwitchToAppointments()
+        {
+            IsAppointmentsTabVisible = true;
+        }
+
+        #endregion
+
+        #region SwitchToNewAppointmentCommand
+        public DelegateCommand SwitchToNewAppointmentCommand { get; }
+
+        private void SwitchToNewAppointment()
+        {
+            IsAppointmentsTabVisible = false;
+        }
+
+        #endregion
+
+        //#region AddAppointmentCommand
+
+        //public DelegateCommand<Day> AddAppointmentCommand { get; }
+
+        //private void AddAppointment(Day day)
+        //{
+        //    var parameters = new DialogParameters
+        //    {
+        //        { "title", $"{day.Date:dd.MM.yyyy}, {TranslateWeekday(day.Date.DayOfWeek.ToString())}" },
+        //        { "day", day }
+        //    };
+        //    _dialogService.ShowDialog("TimetableDialog", parameters);
+        //}
+
+        //#endregion
+
+        //#region ViewAppointmentCommand
+
+        //public DelegateCommand<Appointment> ViewAppointmentCommand { get; }
+
+        //private void ViewAppointment(Appointment appointment)
+        //{
+        //    if (appointment.LinkOrText == null && !appointment.IsFreeDay)
+        //    {
+        //        EditAppointment(appointment);
+        //    }
+
+        //    else
+        //    {
+        //        ViewClientInfo(appointment);
+        //    }
+        //}
+
+        //private void EditAppointment(Appointment appointment)
+        //{
+        //    var date = Days.Where(day => day.Id == appointment.DayId).FirstOrDefault().Date;
+        //    var parameters = new DialogParameters
+        //    {
+        //        { "title", $"{date.Date:dd.MM.yyyy}, {TranslateWeekday(date.Date.DayOfWeek.ToString())}" },
+        //        { "appointment", appointment }
+        //    };
+        //    _dialogService.ShowDialog("AppointmentDialog", parameters);
+        //}
+
+        //private void ViewClientInfo(Appointment appointment)
+        //{
+        //    if (appointment.LinkOrText != null && UriHelper.IsLink(appointment.LinkOrText))
+        //    {
+        //        Launcher.OpenAsync(new Uri(appointment.LinkOrText));
+        //    }
+        //    else
+        //    {
+        //        var date = Days.Where(day => day.Id == appointment.DayId).FirstOrDefault().Date;
+        //        var message = appointment.LinkOrText;
+        //        if (appointment.IsFreeDay && appointment.LinkOrText == null)
+        //        {
+        //            message = "Отдыхайте ٩(◕‿◕)۶";
+        //        }
+        //        var parameters = new DialogParameters
+        //        {
+        //            { "title", $"{date.Date:dd.MM.yyyy}, {TranslateWeekday(date.Date.DayOfWeek.ToString())}" },
+        //            { "message", message }
+        //        };
+        //        _dialogService.ShowDialog("AlertDialog", parameters);
+        //    }
+        //}
+
+        //#endregion
 
         #region LoadNextMonthCommand
         public DelegateCommand LoadNextMonthCommand { get; }
@@ -162,6 +261,18 @@ namespace BeautyPlanner.ViewModels
 
         #endregion
 
+        #region SelectDayCommand
+
+        public DelegateCommand<Day> SelectDayCommand { get; }
+
+        private void SelectDay(Day day)
+        {
+            MarkDaySelected(day);
+        }
+
+        #endregion
+
+
         private async Task LoadMonthAsync(DateTime date)
         {
             Days.Clear();
@@ -177,12 +288,52 @@ namespace BeautyPlanner.ViewModels
                 day.Appointments = new ObservableCollection<Appointment>(appointmentList.Where(appointment => appointment.DayId == day.Id));
                 Days.Add(day);
             }
+
+            SetFrameHeight();
+            SetDefaultSelectedDay();
+        }
+
+        private void SetDefaultSelectedDay()
+        {
+            if (_currrentDateTime.Month == DateTime.Now.Month && _currrentDateTime.Year == DateTime.Now.Year)
+            {
+                SelectedDay = Days.FirstOrDefault(d => d.Date.Day == DateTime.Now.Day);
+                MarkDaySelected(SelectedDay);
+            }
+            else
+            {
+                SelectedDay = Days.FirstOrDefault();
+                MarkDaySelected(SelectedDay);
+            }
+        }
+
+        private void MarkDaySelected(Day selectedDay)
+        {
+            var currentSelectedDay = Days.FirstOrDefault(d => d.IsSelected);
+            if (currentSelectedDay != null)
+            {
+                currentSelectedDay.IsSelected = false;
+            }
+
+            selectedDay.IsSelected = true;
         }
 
         private string TranslateWeekday(string day)
         {
             return Constants.DaysDictionary[day];
         }
+
+        #region SelectedDay property
+
+        private Day _selectedDay;
+       
+        public Day SelectedDay
+        {
+            get => _selectedDay;
+            set => SetProperty(ref _selectedDay, value);
+        }
+
+        #endregion
     }
 }
 

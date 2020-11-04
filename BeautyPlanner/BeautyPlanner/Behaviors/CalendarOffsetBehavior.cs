@@ -23,6 +23,7 @@ namespace BeautyPlanner.Behaviors
             var label = (Label) sender;
             var day = (Day)label.BindingContext;
             var date = day.Date;
+            
             if (date.Day == 1)
             {
                 var weekday = date.DayOfWeek;

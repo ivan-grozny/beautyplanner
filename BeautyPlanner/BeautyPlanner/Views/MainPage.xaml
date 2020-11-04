@@ -2,10 +2,11 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:behaviors="clr-namespace:BeautyPlanner.Behaviors;assembly=BeautyPlanner"
+             xmlns:converters="clr-namespace:BeautyPlanner.Converters;assembly=BeautyPlanner"
              x:Class="BeautyPlanner.Views.MainPage"
              Title="{Binding Title}"
-             NavigationPage.HasNavigationBar="false">
-
+             NavigationPage.HasNavigationBar="false"
+             x:Name="Root">
     <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -22,41 +23,47 @@
             <ScrollView>
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <!--Calendar-->
-                    <Grid Grid.Row="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <Frame Grid.Row="0" WidthRequest="392" Padding="3" HorizontalOptions="Center">
+                    <Grid Grid.Row="0" >
+                        <Frame Grid.Row="0" WidthRequest="392" Padding="3" HorizontalOptions="Center" HeightRequest="{Binding FrameHeight}">
                             <FlexLayout  Wrap ="Wrap"
                                          BindableLayout.ItemsSource="{Binding Days}"
                                          Direction="Row"
                                          JustifyContent="Start"
-                                          Padding="0">
-
+                                         AlignItems="Start"
+                                         AlignContent="Start"
+                                         Padding="0" >
                                 <BindableLayout.ItemTemplate>
-                                    <DataTemplate >
-
+                                    <DataTemplate>
                                         <Label VerticalOptions="Center" Padding="0" 
                                                HeightRequest="50" WidthRequest="50"
                                                Text="{Binding Date, StringFormat='{0:dd}'}"
                                                VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Margin="3"
-                                               BackgroundColor="{StaticResource LightBlueColor}">
+                                               Style="{StaticResource CalendarDayStyle}">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label"
+                                                             Binding="{Binding IsSelected}"
+                                                             Value="true">
+                                                    <Setter Property="Style" Value="{StaticResource SelectedCalendarDayStyle}" />
+                                                </DataTrigger>
+                                            </Label.Triggers>
                                             <Label.Behaviors>
                                                 <behaviors:CalendarOffsetBehavior/>
                                             </Label.Behaviors>
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectDayCommand, Source={x:Reference Root}}"
+                                                                      CommandParameter="{Binding}"/>
+                                            </Label.GestureRecognizers>
                                         </Label>
                                     </DataTemplate>
                                 </BindableLayout.ItemTemplate>
                             </FlexLayout>
                         </Frame>
-
-                        
-                        
                     </Grid>
 
                     <!--Month switcher area-->
@@ -72,6 +79,74 @@
                         <Button Text="◄" Grid.Column="0" Command="{Binding LoadPreviousMonthCommand}"/>
                         <Label Text="{Binding MonthName}" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" FontSize="Medium"/>
                         <Button Text="►" Grid.Column="2" Command="{Binding LoadNextMonthCommand}"/>
+                    </Grid>
+
+                    <!--Tab switcher area-->
+                    <Grid Grid.Row="2" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Text="Записанные" Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center" FontSize="Medium"
+                               Style="{StaticResource SelectedTabStyle}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SwitchToAppointmentsCommand}"/>
+                            </Label.GestureRecognizers>
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label"
+                                             Binding="{Binding IsAppointmentsTabVisible}"
+                                             Value="false">
+                                    <Setter Property="Style" Value="{StaticResource TabStyle}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <Label Text="Записать" Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" FontSize="Medium"
+                               Style="{StaticResource TabStyle}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SwitchToNewAppointmentCommand}"/>
+                            </Label.GestureRecognizers>
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label"
+                                             Binding="{Binding IsAppointmentsTabVisible, Converter={converters:InverseBoolConverter}}"
+                                             Value="true">
+                                    <Setter Property="Style" Value="{StaticResource SelectedTabStyle}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </Grid>
+
+                    <!--Appointments area-->
+                    <Grid Grid.Row="3" IsVisible="{Binding IsAppointmentsTabVisible}">
+                        <Label Text="Hi gooorge"></Label>
+                    </Grid>
+
+                    <!--New Appointment area-->
+                    <Grid Grid.Row="3" IsVisible="{Binding IsAppointmentsTabVisible, Converter={converters:InverseBoolConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Button Grid.Row="0" Text="Сделать выходным" />
+                        <Label Grid.Row="1" Text="Выберите время"/>
+                        <TimePicker Grid.Row="2"/>
+                        <Label Grid.Row="3" Text="Выберите услугу"/>
+                        <Picker Grid.Row="4" />
+                        <Label Grid.Row="5" Text="Instagram клиента"/>
+                        <Entry Grid.Row="6" />
+                        <Label Grid.Row="7" Text="Номер телефона"/>
+                        <Entry Grid.Row="8" />
+                        <Button Grid.Row="9" Text="Записать" />
                     </Grid>
                 </Grid>
             </ScrollView>

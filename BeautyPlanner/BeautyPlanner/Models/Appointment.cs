@@ -31,7 +31,6 @@ namespace BeautyPlanner.Models
                 SetProperty(ref _appointmentType, value); 
                 RaisePropertyChanged(nameof(Time)); //it is required for the AppointmentLabelBehavior to work
             }
-               
         }
 
         public bool IsFreeDay { get; set; }

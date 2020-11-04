@@ -15,5 +15,12 @@ namespace BeautyPlanner.Models
         public ObservableCollection<Appointment> Appointments { get; set; }
 
         public int MonthId { get; set; }
+
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { SetProperty(ref _isSelected, value); }
+        }
     }
 }
